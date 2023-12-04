@@ -4674,7 +4674,7 @@ def sample_images_common(
 
             repo_id = os.getenv("WORKING_REPO") 
             if repo_id and W_TOKEN:
-                upload_file(repo_id, os.path.join(save_dir, img_filename), "sample" + img_filename, W_TOKEN)
+                upload_file(repo_id, os.path.join(save_dir, img_filename), f"sample/{img_filename}", W_TOKEN)
 
             # wandb有効時のみログを送信
             try:
