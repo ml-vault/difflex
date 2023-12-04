@@ -10,6 +10,8 @@ import pathlib
 import re
 import shutil
 import time
+from mlvault.api import upload_file
+from apilib.util.env import HF_USER, W_TOKEN
 from typing import (
     Dict,
     List,
@@ -4667,6 +4669,9 @@ def sample_images_common(
             img_filename = (
                 f"{'' if args.output_name is None else args.output_name + '_'}{ts_str}_{num_suffix}_{i:02d}{seed_suffix}.png"
             )
+            repo_id = os.getenv("WORKING_REPO") 
+            if repo_id and W_TOKEN:
+                upload_file(repo_id, os.path.join(save_dir, img_filename), "sample" + img_filename, W_TOKEN)
 
             image.save(os.path.join(save_dir, img_filename))
 
