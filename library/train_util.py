@@ -4219,7 +4219,7 @@ def save_sd_model_on_epoch_end_or_stepwise_common(
         if args.huggingface_repo_id is not None:
             huggingface_util.upload(args, ckpt_file, "/" + ckpt_name)
 
-        upload.upload_file(os.getenv("WORKING_REPO") or "", ckpt_file, "/" + model_name, W_TOKEN)
+        upload.upload_file(os.getenv("WORKING_REPO") or "", ckpt_file, "/" + ckpt_name, W_TOKEN)
 
         # remove older checkpoints
         if remove_no is not None:
