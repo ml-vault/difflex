@@ -66,6 +66,7 @@ from library.lpw_stable_diffusion import StableDiffusionLongPromptWeightingPipel
 import library.model_util as model_util
 import library.huggingface_util as huggingface_util
 import library.sai_model_spec as sai_model_spec
+from mlvault.api import upload
 
 # from library.attention_processors import FlashAttnProcessor
 # from library.hypernetwork import replace_attentions_for_hypernetwork
@@ -4218,6 +4219,8 @@ def save_sd_model_on_epoch_end_or_stepwise_common(
         if args.huggingface_repo_id is not None:
             huggingface_util.upload(args, ckpt_file, "/" + ckpt_name)
 
+        upload.upload_file(os.getenv("WORKING_REPO") or "", ckpt_file, "/" + model_name, W_TOKEN)
+
         # remove older checkpoints
         if remove_no is not None:
             if on_epoch_end:
@@ -4241,6 +4244,7 @@ def save_sd_model_on_epoch_end_or_stepwise_common(
 
         if args.huggingface_repo_id is not None:
             huggingface_util.upload(args, out_dir, "/" + model_name)
+        upload.upload_file(os.getenv("WORKING_REPO") or "", out_dir, "/" + model_name, W_TOKEN)
 
         # remove older checkpoints
         if remove_no is not None:
