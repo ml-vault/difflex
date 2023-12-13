@@ -12,6 +12,7 @@ import shutil
 import time
 from mlvault.api import upload_file
 from apilib.util.env import HF_USER, W_TOKEN
+from mlvault.config import get_w_token
 from typing import (
     Dict,
     List,
@@ -4219,7 +4220,7 @@ def save_sd_model_on_epoch_end_or_stepwise_common(
         if args.huggingface_repo_id is not None:
             huggingface_util.upload(args, ckpt_file, "/" + ckpt_name)
 
-        upload.upload_file(os.getenv("WORKING_REPO") or "", ckpt_file, "/" + ckpt_name, W_TOKEN)
+        upload.upload_file(os.getenv("WORKING_REPO", ""), ckpt_file, os.path.join(os.getenv("REPO_DIR", ""), ckpt_name), W_TOKEN)
         os.remove(ckpt_file)
 
         # remove older checkpoints
@@ -4245,7 +4246,7 @@ def save_sd_model_on_epoch_end_or_stepwise_common(
 
         if args.huggingface_repo_id is not None:
             huggingface_util.upload(args, out_dir, "/" + model_name)
-        upload.upload_file(os.getenv("WORKING_REPO") or "", out_dir, "/" + model_name, W_TOKEN)
+        upload.upload_file(os.getenv("WORKING_REPO", ""), out_dir, os.path.join(os.getenv("REPO_DIR", ""), model_name), W_TOKEN)
         os.remove(out_dir)
 
         # remove older checkpoints
@@ -4678,9 +4679,7 @@ def sample_images_common(
 
             image.save(os.path.join(save_dir, img_filename))
 
-            repo_id = os.getenv("WORKING_REPO") 
-            if repo_id and W_TOKEN:
-                upload_file(repo_id, os.path.join(save_dir, img_filename), f"sample/{img_filename}", W_TOKEN)
+            upload_file(os.getenv("WORKING_REPO",""), os.path.join(save_dir, img_filename), os.path.join(os.getenv("REPO_DIR",""), "sample", img_filename), get_w_token() )
 
             # wandb有効時のみログを送信
             try:

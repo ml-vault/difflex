@@ -736,7 +736,7 @@ class NetworkTrainer:
             metadata_to_save.update(sai_metadata)
 
             unwrapped_nw.save_weights(ckpt_file, save_dtype, metadata_to_save)
-            upload.upload_file(os.getenv("WORKING_REPO") or "", ckpt_file, "/" + ckpt_name, W_TOKEN)
+            upload.upload_file(os.getenv("WORKING_REPO", ""), ckpt_file, os.path.join(os.getenv("REPO_DIR", ""), ckpt_name), W_TOKEN)
 
         def remove_model(old_ckpt_name):
             old_ckpt_file = os.path.join(args.output_dir, old_ckpt_name)
