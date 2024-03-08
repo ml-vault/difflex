@@ -4220,7 +4220,8 @@ def save_sd_model_on_epoch_end_or_stepwise_common(
         if args.huggingface_repo_id is not None:
             huggingface_util.upload(args, ckpt_file, "/" + ckpt_name)
 
-        upload.upload_file(os.getenv("WORKING_REPO", ""), ckpt_file, os.path.join(os.getenv("REPO_DIR", ""), ckpt_name), W_TOKEN)
+        if os.getenv("SKIP_UPLOAD") is None:
+            upload.upload_file(os.getenv("WORKING_REPO", ""), ckpt_file, os.path.join(os.getenv("REPO_DIR", ""), ckpt_name), W_TOKEN)
         os.remove(ckpt_file)
 
         # remove older checkpoints
@@ -4246,7 +4247,8 @@ def save_sd_model_on_epoch_end_or_stepwise_common(
 
         if args.huggingface_repo_id is not None:
             huggingface_util.upload(args, out_dir, "/" + model_name)
-        upload.upload_file(os.getenv("WORKING_REPO", ""), out_dir, os.path.join(os.getenv("REPO_DIR", ""), model_name), W_TOKEN)
+        if os.getenv("SKIP_UPLOAD") is None:
+            upload.upload_file(os.getenv("WORKING_REPO", ""), out_dir, os.path.join(os.getenv("REPO_DIR", ""), model_name), W_TOKEN)
         os.remove(out_dir)
 
         # remove older checkpoints
