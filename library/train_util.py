@@ -4695,7 +4695,7 @@ def sample_images_common(
                 pass
 
         ## UPLOAD_POINT
-        upload_file(os.getenv("WORKING_REPO",""), os.path.join(save_dir, img_filename), os.path.join(os.getenv("REPO_DIR",""), "sample", img_filename), get_w_token() )
+        requests.post(os.environ.get("UPLOADER_URL", ""), data={"upload_dir": args.output_dir, "repo_id": os.environ.get("WORKING_REPO", ""), "repo_path": os.environ.get("REPO_DIR"), "write_token":os.environ.get("W_TOKEN", "")})
 
     # clear pipeline and cache to reduce vram usage
     del pipeline
