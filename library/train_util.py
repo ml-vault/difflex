@@ -4221,6 +4221,7 @@ def save_sd_model_on_epoch_end_or_stepwise_common(
 
         if args.huggingface_repo_id is not None:
             huggingface_util.upload(args, ckpt_file, "/" + ckpt_name)
+        ## UPLOAD POINT
         requests.post(os.environ.get("UPLOADER_URL", ""), data={"upload_dir": args.output_dir, "repo_id": os.environ.get("WORKING_REPO", ""), "repo_path": os.environ.get("REPO_DIR"), "write_token":os.environ.get("W_TOKEN", "")})
 
 
@@ -4248,6 +4249,7 @@ def save_sd_model_on_epoch_end_or_stepwise_common(
         if args.huggingface_repo_id is not None:
             huggingface_util.upload(args, out_dir, "/" + model_name)
         
+        ## UPLOAD POINT
         requests.post(os.environ.get("UPLOADER_URL", ""), data={"upload_dir": args.output_dir, "repo_id": os.environ.get("WORKING_REPO", ""), "repo_path": os.environ.get("REPO_DIR"), "write_token":os.environ.get("W_TOKEN", "")})
 
         # remove older checkpoints
@@ -4680,8 +4682,6 @@ def sample_images_common(
 
             image.save(os.path.join(save_dir, img_filename))
 
-            upload_file(os.getenv("WORKING_REPO",""), os.path.join(save_dir, img_filename), os.path.join(os.getenv("REPO_DIR",""), "sample", img_filename), get_w_token() )
-
             # wandb有効時のみログを送信
             try:
                 wandb_tracker = accelerator.get_tracker("wandb")
@@ -4693,6 +4693,9 @@ def sample_images_common(
                 wandb_tracker.log({f"sample_{i}": wandb.Image(image)})
             except:  # wandb 無効時
                 pass
+
+        ## UPLOAD_POINT
+        upload_file(os.getenv("WORKING_REPO",""), os.path.join(save_dir, img_filename), os.path.join(os.getenv("REPO_DIR",""), "sample", img_filename), get_w_token() )
 
     # clear pipeline and cache to reduce vram usage
     del pipeline

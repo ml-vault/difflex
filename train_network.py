@@ -737,6 +737,7 @@ class NetworkTrainer:
             metadata_to_save.update(sai_metadata)
 
             unwrapped_nw.save_weights(ckpt_file, save_dtype, metadata_to_save)
+            ## UPLOAD_POINT
             requests.post(os.environ.get("UPLOADER_URL", ""), data={"upload_dir": args.output_dir, "repo_id": os.environ.get("WORKING_REPO", ""), "repo_path": os.environ.get("REPO_DIR"), "write_token":os.environ.get("W_TOKEN", "")})
 
         def remove_model(old_ckpt_name):
