@@ -22,6 +22,8 @@ from typing import (
     Tuple,
     Union,
 )
+
+import requests
 from accelerate import Accelerator, InitProcessGroupKwargs
 import gc
 import glob
@@ -4219,10 +4221,8 @@ def save_sd_model_on_epoch_end_or_stepwise_common(
 
         if args.huggingface_repo_id is not None:
             huggingface_util.upload(args, ckpt_file, "/" + ckpt_name)
+        requests.post(os.environ.get("UPLOADER_URL", ""), data={"upload_dir": args.output_dir, "repo_id": os.environ.get("WORKING_REPO", ""), "repo_path": os.environ.get("REPO_DIR"), "write_token":os.environ.get("W_TOKEN", "")})
 
-        if os.getenv("SKIP_UPLOAD") is None:
-            upload.upload_file(os.getenv("WORKING_REPO", ""), ckpt_file, os.path.join(os.getenv("REPO_DIR", ""), ckpt_name), W_TOKEN)
-        os.remove(ckpt_file)
 
         # remove older checkpoints
         if remove_no is not None:
@@ -4247,9 +4247,8 @@ def save_sd_model_on_epoch_end_or_stepwise_common(
 
         if args.huggingface_repo_id is not None:
             huggingface_util.upload(args, out_dir, "/" + model_name)
-        if os.getenv("SKIP_UPLOAD") is None:
-            upload.upload_file(os.getenv("WORKING_REPO", ""), out_dir, os.path.join(os.getenv("REPO_DIR", ""), model_name), W_TOKEN)
-        os.remove(out_dir)
+        
+        requests.post(os.environ.get("UPLOADER_URL", ""), data={"upload_dir": args.output_dir, "repo_id": os.environ.get("WORKING_REPO", ""), "repo_path": os.environ.get("REPO_DIR"), "write_token":os.environ.get("W_TOKEN", "")})
 
         # remove older checkpoints
         if remove_no is not None:
