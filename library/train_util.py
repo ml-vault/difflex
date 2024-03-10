@@ -10,9 +10,8 @@ import pathlib
 import re
 import shutil
 import time
-from mlvault.api import upload_file
+from apilib.upload.main import call_uploader
 from apilib.util.env import HF_USER, W_TOKEN
-from mlvault.config import get_w_token
 from typing import (
     Dict,
     List,
@@ -4222,7 +4221,7 @@ def save_sd_model_on_epoch_end_or_stepwise_common(
         if args.huggingface_repo_id is not None:
             huggingface_util.upload(args, ckpt_file, "/" + ckpt_name)
         ## UPLOAD POINT
-        requests.post(os.environ.get("UPLOADER_URL", ""), data={"upload_dir": args.output_dir, "repo_id": os.environ.get("WORKING_REPO", ""), "repo_path": os.environ.get("REPO_DIR"), "write_token":os.environ.get("W_TOKEN", "")})
+        call_uploader(args.output_dir)
 
 
         # remove older checkpoints
@@ -4250,7 +4249,7 @@ def save_sd_model_on_epoch_end_or_stepwise_common(
             huggingface_util.upload(args, out_dir, "/" + model_name)
         
         ## UPLOAD POINT
-        requests.post(os.environ.get("UPLOADER_URL", ""), data={"upload_dir": args.output_dir, "repo_id": os.environ.get("WORKING_REPO", ""), "repo_path": os.environ.get("REPO_DIR"), "write_token":os.environ.get("W_TOKEN", "")})
+        call_uploader(args.output_dir)
 
         # remove older checkpoints
         if remove_no is not None:
@@ -4695,7 +4694,7 @@ def sample_images_common(
                 pass
 
         ## UPLOAD_POINT
-        requests.post(os.environ.get("UPLOADER_URL", ""), data={"upload_dir": args.output_dir, "repo_id": os.environ.get("WORKING_REPO", ""), "repo_path": os.environ.get("REPO_DIR"), "write_token":os.environ.get("W_TOKEN", "")})
+        call_uploader(args.output_dir)
 
     # clear pipeline and cache to reduce vram usage
     del pipeline

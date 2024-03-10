@@ -8,7 +8,7 @@ import random
 import time
 import json
 from multiprocessing import Value
-import requests
+from apilib.upload.main import call_uploader
 import toml
 
 from tqdm import tqdm
@@ -738,7 +738,7 @@ class NetworkTrainer:
 
             unwrapped_nw.save_weights(ckpt_file, save_dtype, metadata_to_save)
             ## UPLOAD_POINT
-            requests.post(os.environ.get("UPLOADER_URL", ""), data={"upload_dir": args.output_dir, "repo_id": os.environ.get("WORKING_REPO", ""), "repo_path": os.environ.get("REPO_DIR"), "write_token":os.environ.get("W_TOKEN", "")})
+            call_uploader(args.output_dir)
 
         def remove_model(old_ckpt_name):
             old_ckpt_file = os.path.join(args.output_dir, old_ckpt_name)
