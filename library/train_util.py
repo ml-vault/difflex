@@ -10,7 +10,7 @@ import pathlib
 import re
 import shutil
 import time
-from apilib.upload.main import call_uploader
+from apilib.upload.main import call_uploader, upload_file_future
 from apilib.util.env import HF_USER, W_TOKEN
 from typing import (
     Dict,
@@ -59,7 +59,7 @@ from diffusers import (
 )
 from library import custom_train_functions
 from library.original_unet import UNet2DConditionModel
-from huggingface_hub import hf_hub_download
+from huggingface_hub import hf_hub_download, upload_folder
 import numpy as np
 from PIL import Image
 import cv2
@@ -4220,6 +4220,7 @@ def save_sd_model_on_epoch_end_or_stepwise_common(
 
         if args.huggingface_repo_id is not None:
             huggingface_util.upload(args, ckpt_file, "/" + ckpt_name)
+        upload_file_future(ckpt_file, "/")
 
         # remove older checkpoints
         if remove_no is not None:
@@ -4244,6 +4245,7 @@ def save_sd_model_on_epoch_end_or_stepwise_common(
 
         if args.huggingface_repo_id is not None:
             huggingface_util.upload(args, out_dir, "/" + model_name)
+        upload_file_future(out_dir, "/")
         
         # remove older checkpoints
         if remove_no is not None:
@@ -4373,6 +4375,7 @@ def save_sd_model_on_train_end_common(
 
         if args.huggingface_repo_id is not None:
             huggingface_util.upload(args, ckpt_file, "/" + ckpt_name, force_sync_upload=True)
+        upload_file_future(file_path=ckpt_file, path_in_repo="/")
     else:
         out_dir = os.path.join(args.output_dir, model_name)
         os.makedirs(out_dir, exist_ok=True)
@@ -4382,6 +4385,7 @@ def save_sd_model_on_train_end_common(
 
         if args.huggingface_repo_id is not None:
             huggingface_util.upload(args, out_dir, "/" + model_name, force_sync_upload=True)
+        upload_file_future(file_path=out_dir, path_in_repo="/")
 
 
 def get_noise_noisy_latents_and_timesteps(args, noise_scheduler, latents):
@@ -4674,6 +4678,8 @@ def sample_images_common(
             )
 
             image.save(os.path.join(save_dir, img_filename))
+            ## UPLOAD_POINT
+            upload_file_future(file_path=os.path.join(save_dir, img_filename), path_in_repo=f"samples")
 
             # wandb有効時のみログを送信
             try:
@@ -4686,9 +4692,6 @@ def sample_images_common(
                 wandb_tracker.log({f"sample_{i}": wandb.Image(image)})
             except:  # wandb 無効時
                 pass
-
-        ## UPLOAD_POINT
-        call_uploader(args.output_dir)
 
     # clear pipeline and cache to reduce vram usage
     del pipeline
