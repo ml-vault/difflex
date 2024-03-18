@@ -10,7 +10,7 @@ import pathlib
 import re
 import shutil
 import time
-from apilib.upload.main import call_uploader, upload_file_future
+from apilib.upload.main import upload_file_future
 from apilib.util.env import HF_USER, W_TOKEN
 from typing import (
     Dict,
@@ -4220,7 +4220,7 @@ def save_sd_model_on_epoch_end_or_stepwise_common(
 
         if args.huggingface_repo_id is not None:
             huggingface_util.upload(args, ckpt_file, "/" + ckpt_name)
-        upload_file_future(ckpt_file, "/")
+        upload_file_future(ckpt_file, f"/{ckpt_name}")
 
         # remove older checkpoints
         if remove_no is not None:
@@ -4245,7 +4245,7 @@ def save_sd_model_on_epoch_end_or_stepwise_common(
 
         if args.huggingface_repo_id is not None:
             huggingface_util.upload(args, out_dir, "/" + model_name)
-        upload_file_future(out_dir, "/")
+        upload_file_future(out_dir, f"/{model_name}")
         
         # remove older checkpoints
         if remove_no is not None:
@@ -4375,7 +4375,7 @@ def save_sd_model_on_train_end_common(
 
         if args.huggingface_repo_id is not None:
             huggingface_util.upload(args, ckpt_file, "/" + ckpt_name, force_sync_upload=True)
-        upload_file_future(file_path=ckpt_file, path_in_repo="/")
+        upload_file_future(file_path=ckpt_file, path_in_repo=f"/{ckpt_name}")
     else:
         out_dir = os.path.join(args.output_dir, model_name)
         os.makedirs(out_dir, exist_ok=True)
@@ -4385,7 +4385,7 @@ def save_sd_model_on_train_end_common(
 
         if args.huggingface_repo_id is not None:
             huggingface_util.upload(args, out_dir, "/" + model_name, force_sync_upload=True)
-        upload_file_future(file_path=out_dir, path_in_repo="/")
+        upload_file_future(file_path=out_dir, path_in_repo=f"/{model_name}")
 
 
 def get_noise_noisy_latents_and_timesteps(args, noise_scheduler, latents):
@@ -4679,7 +4679,7 @@ def sample_images_common(
 
             image.save(os.path.join(save_dir, img_filename))
             ## UPLOAD_POINT
-            upload_file_future(file_path=os.path.join(save_dir, img_filename), path_in_repo=f"samples")
+            upload_file_future(file_path=os.path.join(save_dir, img_filename), path_in_repo=f"samples/{img_filename}")
 
             # wandb有効時のみログを送信
             try:

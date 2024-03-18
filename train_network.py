@@ -47,7 +47,7 @@ from library.custom_train_functions import (
 )
 
 from mlvault.api import upload
-from apilib.upload.main import call_uploader, upload_file_future
+from apilib.upload.main import upload_file_future
 from apilib.util.env import W_TOKEN
 
 class NetworkTrainer:
@@ -737,7 +737,7 @@ class NetworkTrainer:
             metadata_to_save.update(sai_metadata)
 
             unwrapped_nw.save_weights(ckpt_file, save_dtype, metadata_to_save)
-            upload_file_future(ckpt_file, "/")
+            upload_file_future(ckpt_file, f"/{ckpt_name}")
             
 
         def remove_model(old_ckpt_name):
